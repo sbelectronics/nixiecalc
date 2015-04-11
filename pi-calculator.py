@@ -8,12 +8,16 @@ from nixie_i2c import Nixie
 def diglen(x):
     return len(x.replace(".",""))
 
+MODE_OFF = "off"
+MODE_ON = "on"
+MODE_CLK = "clk"
+
 class PiNixieCalculator(Calculator):
     def __init__(self, nixie, keypads):
         Calculator.__init__(self)
         self.nixie = nixie
         self.keypads = keypads
-        self.clockMode = False
+        self.mode = MODE_OFF
         self.clockLastTime = None
 
     def updateDisplay(self):
@@ -42,9 +46,15 @@ class PiNixieCalculator(Calculator):
     def handle_key(self, key):
         if (key == "CLK"):
             self.clockLastTime=None
-            self.clockMode=True
-        else:
-            self.clockMode=False
+            self.mode=MODE_CLK
+        elif (key == "PWR"):
+            if self.mode in [MODE_ON, MODE_CLK]:
+                self.mode = MODE_OFF
+            else:
+                self.reset()
+                self.mode = MODE_ON
+        elif (self.mode in [MODE_OFF, MODE_CLK]):
+            self.mode = MODE_ON
         super(PiNixieCalculator, self).handle_key(key)
 
     def poll(self):
@@ -52,12 +62,13 @@ class PiNixieCalculator(Calculator):
             keypad.calculator = self
             keypad.poll()
 
-        if self.clockMode:
+        if self.mode == MODE_CLK:
             t = time.strftime("%H %M %S")
             if t!=self.clockLastTime:
                 self.clockLastTime=t
                 self.nixie.set_string(self.clockLastTime)
-
+        elif self.mode == MODE_OFF:
+            self.nixie.set_string("        ")
 
 class KeyPadNumbers(Keypad):
     keyMap = ["/", "=", "0", ".",
