@@ -58,6 +58,12 @@ class MCP23017:
        self.set_iodir(0, 0x00)
        self.set_iodir(1, 0x00)
 
+   def configure_as_led_keypad(self):
+       # bank 0 is inputs
+       # bank 1 is outputs
+       self.set_pullup(0, 0xFF)
+       self.set_iodir(1, 0x00)
+
 class PCF8574:
     def __init__(self, bus, addr):
         self.addr = addr
