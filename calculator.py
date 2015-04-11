@@ -24,11 +24,16 @@ class Calculator(object):
 
         self.unary = {}
         self.unary["!"] = self.factorial
+        self.unary["10x"] = self.powten
         self.unary["x2"] = self.x2
         self.unary["x3"] = self.x3
         self.unary["int"] = self.int
         self.unary["MR"] = self.memRead
         self.unary["pi"] = self.pi
+        self.unary["1/x"] = self.inverse
+        self.unary["sqrt"] = self.sqrt
+        self.unary["log"] = self.log10
+        self.unary["ln"] = self.ln
 
         self.operator = None
         self.operand = None
@@ -36,6 +41,12 @@ class Calculator(object):
         self.lastKey = None
 
         self.memory = 0
+
+    def reset(self):
+        self.display = 0
+        self.memory = 0
+        self.accumulator = None
+        self.inputBuffer = ""
 
     def handle_key(self, key):
         if key in ['0','1','2','3','4','5','6','7','8','9','.']:
@@ -118,6 +129,9 @@ class Calculator(object):
     def factorial(self, value):
         return math.factorial(int(value))
 
+    def powten(self, value):
+        return math.pow(10, value)
+
     def x2(self, value):
         return (value * value)
 
@@ -132,6 +146,18 @@ class Calculator(object):
 
     def pi(self, value):
         return math.pi
+
+    def inverse(self, value):
+        return 1/value
+
+    def sqrt(self, value):
+        return math.sqrt(value)
+
+    def log10(self, value):
+        return math.log10(value)
+
+    def ln(self, value):
+        return math.log(value)
 
 
 def getch():
