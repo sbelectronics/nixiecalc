@@ -1,8 +1,11 @@
 IODIR = 0x00
 IPOL = 0x02
 GPINTEN = 0x04
+DEFVAL = 0x06
+INTCON = 0x08
 IOCON = 0x0A
 GPPU = 0x0C
+INTF = 0x0E
 MCP23017_GPIO = 0x12
 OLAT = 0x14
 
@@ -38,6 +41,12 @@ class MCP23017:
    def set_interrupt(self, bank, bits):
        self.writereg(bank + GPINTEN, bits)
 
+   def set_intdef(self, bank, bits):
+       self.writereg(bank + DEFVAL, bits)
+
+   def set_intcon(self, bank, bits):
+       self.writereg(bank + INTCON, bits)
+
    def set_config(self, bits):
        self.writereg(IOCON, bits)
 
@@ -53,6 +62,9 @@ class MCP23017:
 
    def get_gpio(self, bank):
        return self.readreg(bank + MCP23017_GPIO)
+
+   def get_intf(self, bank):
+       return self.readreg(bank + INTF)
 
    def configure_as_keypad(self):
        self.set_pullup(0, 0xFF)
